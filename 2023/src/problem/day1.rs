@@ -47,7 +47,7 @@ impl Solver for Day01 {
     /// converts it to a valid two digit number, and sums all values for the
     /// `input` file and stores in `out`.
     fn part_a(&self, input: &str, out: std::sync::Arc<std::sync::Mutex<schema::Answer>>) 
-            -> Result<Duration, Box<&(dyn std::error::Error + Send + Sync)>> {
+            -> Result<Duration, Box<(dyn std::error::Error + Send + Sync)>> {
         
         let mut total = 0;
 
@@ -65,7 +65,7 @@ impl Solver for Day01 {
 
     /// Part 2: ...
     fn part_b(&self, input: &str, out: std::sync::Arc<std::sync::Mutex<schema::Answer>>) 
-            -> Result<Duration, Box<&(dyn std::error::Error + Send + Sync)>> {
+            -> Result<Duration, Box<(dyn std::error::Error + Send + Sync)>> {
 
         let mut total = 0;
 
@@ -77,8 +77,6 @@ impl Solver for Day01 {
             for (i, digit) in DIGITS.iter().enumerate() {
                 naive_replace(mod_line.as_mut_str(), digit, format!("{}", i).as_str());
             }
-
-            eprintln!("{mod_line}");
 
             total += get_num(mod_line.as_str())
         }
