@@ -16,7 +16,7 @@ fn get_num(l: &str) -> u32 {
 
     let mut first = *num.first().unwrap();
     first = (first << 3) + (first << 1);
-    first + num.last().unwrap_or(&first)
+    first + num.last().unwrap_or(num.first().unwrap())
 }
 
 /// A naive replacement algorithm that replaces the first letter of digit

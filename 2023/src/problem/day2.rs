@@ -14,22 +14,19 @@ fn line_parse(line: &str) -> Result<(u32, u32, u32, u32), Box<dyn Error + Send +
     let mut blue = 0;
     let mut green = 0;
 
-    for set in lgame.split(";") {
-        for s in set.split_terminator(",") {
-            let mut c = s.trim().split_whitespace();
+    for set in lgame.split_terminator(&[';',',']) {
+        let mut c = set.trim().split_whitespace();
 
-            let val = c.next().unwrap().parse::<u32>().unwrap();
+        let val = c.next().unwrap().parse::<u32>().unwrap();
 
-            match c.next().unwrap_or_default() {
-                "red" => { red = red.max(val); },
-                "green" => { green = green.max(val); },
-                "blue" => { blue = blue.max(val); },
-                _ => {
-                    eprintln!("Found invalid color at {id}");
-                    return Err(Box::<dyn Error + Send + Sync>::from("Bad input!"));
-                },
-            }
-
+        match c.next().unwrap_or_default() {
+            "red"   => { red = red.max(val);        },
+            "green" => { green = green.max(val);    },
+            "blue"  => { blue = blue.max(val);      },
+            _ => {
+                eprintln!("Found invalid color at {id}");
+                return Err(Box::<dyn Error + Send + Sync>::from("Bad input!"));
+            },
         }
 
     }
