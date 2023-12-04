@@ -56,7 +56,10 @@ impl Default for Found {
     }
 }
 
-
+/// An interesting algorithm to find all the part numbers and the parts in the
+/// input, then for each part look around and find the part numbers.
+/// 
+/// In the case of gears, the filter is easier!
 fn find_parts(page: &str, is_ratio: bool) -> Found {
 
     let mut parts: AHashMap<(u32, u32), char> = AHashMap::new();
@@ -71,9 +74,20 @@ fn find_parts(page: &str, is_ratio: bool) -> Found {
     
     for (y, l) in p.enumerate() {
 
-        max_x = max_x.max(l.len());
+        max_x = max_x.max(l.char_indices().count());
 
         for (x, s) in l.char_indices() {
+
+            // An awkward way of handling the literal edge cases
+            if is_num && (x == 0) {
+                pos.end = ((max_x-1) as u32, ((y-1) as u32));
+                numbers.insert(pos, it);
+
+                is_num = false;
+                it = 0;
+                pos = Position::default();
+            }
+
             if s.is_ascii_punctuation() && (s != '.') && !is_num {
                 parts.insert(((x as u32), (y as u32)), s);
             }
@@ -100,24 +114,24 @@ fn find_parts(page: &str, is_ratio: bool) -> Found {
         }
     }
 
-    let found_value = |r: Position, i| {
-        let (x_s, y_s) = r.start;
-        let (w, h) = r.end;
-        let mut a = None;
-        for x in x_s.saturating_sub(1)..=(w+1).min(max_x as u32) {
-            for y in y_s.saturating_sub(1)..=(h+1).min(max_y as u32) {
-                if parts.contains_key(&(x, y)) {
-                    //eprintln!("Hit {} at {x}, {y}", parts.get(&(x, y)).unwrap());
-                    a = Some(i);
-                    break;
+    if !is_ratio {
+        // This resembles bounding box aabb detection
+        let found_value = |r: Position, i| {
+            let (x_s, y_s) = r.start;
+            let (w, h) = r.end;
+            let mut a = None;
+            for x in x_s.saturating_sub(1)..=(w+1).min(max_x as u32) {
+                for y in y_s.saturating_sub(1)..=(h+1).min(max_y as u32) {
+                    if parts.contains_key(&(x, y)) {
+                        a = Some(i);
+                        break;
+                    }
                 }
-            }
+            };
+    
+            a
         };
 
-        a
-    };
-
-    if !is_ratio {
         let ans: u32 = numbers.iter()
                         .filter_map(|(t, i)| found_value(*t, *i))
                         .sum::<u32>();
@@ -191,10 +205,30 @@ mod test {
         .664.598..
     "};
 
+    const PUZZLE_ONE: &str = indoc! {"
+        467..114..
+        ...*......
+        ..35..633.
+        ......#...
+        617*11.111
+        2....+.58.
+        ..592.....
+        ....8.755.
+        ...$.*....
+        .664.598..
+    "};
+
     #[test]
     fn part_a() {
         let out = Arc::new(Mutex::new(Answer::Unimplemented));
         let _ = Day03.part_a(PUZZLE, out.clone());
         assert_eq!(*out.lock().unwrap().deref(), Answer::Number(4361));
+    }
+
+    #[test]
+    fn part_a_mod() {
+        let out = Arc::new(Mutex::new(Answer::Unimplemented));
+        let _ = Day03.part_a(PUZZLE_ONE, out.clone());
+        assert_eq!(*out.lock().unwrap().deref(), Answer::Number(4491));
     }
 }
