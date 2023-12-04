@@ -4,23 +4,11 @@ use ahash::AHashMap;
 use schema::Solver;
 use crate::problem::day3::Found::*;
 
-#[derive(Debug, Default, Clone, Copy, Hash)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 struct Position {
     start: (u32, u32),
     end: (u32, u32),
 }
-
-impl PartialEq for Position {
-    fn eq(&self, other: &Self) -> bool {
-        (self.start == other.start) && (self.end == self.end)
-    }
-
-    fn ne(&self, other: &Self) -> bool {
-        (self.start != other.start) && (self.end != self.end)
-    }
-}
-
-impl Eq for Position {}
 
 enum Found {
     Part(u32),
@@ -138,7 +126,30 @@ fn find_parts(page: &str, is_ratio: bool) -> Found {
         Found::Part(ans)
     }
     else {
-        let ans = 0;
+        // Gather the gears and see where there are two numbers
+        let gears: Vec<(u32, u32)> = parts.iter()
+                    .filter(|&(_, char)| *char == '*')
+                    .map(|(xy, _)| *xy)
+                    .collect();
+
+        let mut gs: AHashMap<(u32, u32), Vec<u32>> = AHashMap::new();
+
+        for num in numbers.iter() {
+            let (x_s, y_s) = num.0.start;
+            let (w, h) = num.0.end;
+            for x in x_s.saturating_sub(1)..=(w+1).min(max_x as u32) {
+                for y in y_s.saturating_sub(1)..=(h+1).min(max_y as u32) {
+                    if gears.contains(&(x, y)) {
+                        gs.entry((x, y)).or_default().push(*num.1);
+                    }
+                }
+            };
+        }
+
+        let ans = gs.iter()
+                    .filter(|(_, vs)| vs.len() == 2)
+                    .map(|(_, val)| val[0] * val[1])
+                    .sum();
         Found::Ratio(ans)
     }
 }
@@ -213,7 +224,7 @@ mod test {
         617*11.111
         2....+.58.
         ..592.....
-        ....8.755.
+        ......755.
         ...$.*....
         .664.598..
     "};
@@ -229,6 +240,20 @@ mod test {
     fn part_a_mod() {
         let out = Arc::new(Mutex::new(Answer::Unimplemented));
         let _ = Day03.part_a(PUZZLE_ONE, out.clone());
-        assert_eq!(*out.lock().unwrap().deref(), Answer::Number(4491));
+        assert_eq!(*out.lock().unwrap().deref(), Answer::Number(4483));
+    }
+
+    #[test]
+    fn part_b() {
+        let out = Arc::new(Mutex::new(Answer::Unimplemented));
+        let _ = Day03.part_b(PUZZLE, out.clone());
+        assert_eq!(*out.lock().unwrap().deref(), Answer::Number(467835));
+    }
+
+    #[test]
+    fn part_b_mod() {
+        let out = Arc::new(Mutex::new(Answer::Unimplemented));
+        let _ = Day03.part_b(PUZZLE_ONE, out.clone());
+        assert_eq!(*out.lock().unwrap().deref(), Answer::Number(474622));
     }
 }
