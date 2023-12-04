@@ -6,7 +6,7 @@ use schema::Solver;
 pub struct Day02;
 
 fn line_parse(line: &str) -> Result<(u32, u32, u32, u32), Box<dyn Error + Send + Sync>> {
-    let (game, lgame) = line.split_once(":").unwrap();
+    let (game, lgame) = line.split_once(':').unwrap();
 
     let id = game.split_at(5).1.parse::<u32>().unwrap();
 
@@ -15,7 +15,7 @@ fn line_parse(line: &str) -> Result<(u32, u32, u32, u32), Box<dyn Error + Send +
     let mut green = 0;
 
     for set in lgame.split_terminator(&[';',',']) {
-        let mut c = set.trim().split_whitespace();
+        let mut c = set.split_whitespace();
 
         let val = c.next().unwrap().parse::<u32>().unwrap();
 
