@@ -43,11 +43,11 @@ impl Solver for Day04 {
 
             let mut dummy = Card::default();
 
-            for w in win.trim().split_whitespace() {
+            for w in win.split_whitespace() {
                 dummy.winning_nums.insert(w.parse::<u32>().unwrap());
             }
 
-            for s in scratch.trim().split_whitespace() {
+            for s in scratch.split_whitespace() {
                 dummy.scratch_nums.insert(s.parse::<u32>().unwrap());
             }
 
@@ -57,7 +57,7 @@ impl Solver for Day04 {
 
         let mut total = 0;
 
-        for c in cards.iter().filter(|x| x.win_nums.len() > 0) {
+        for c in cards.iter().filter(|x| !x.win_nums.is_empty()) {
             total += c.total();
         }
 
@@ -82,11 +82,11 @@ impl Solver for Day04 {
 
             let mut dummy = Card::default();
 
-            for w in win.trim().split_whitespace() {
+            for w in win.split_whitespace() {
                 dummy.winning_nums.insert(w.parse::<u32>().unwrap());
             }
 
-            for s in scratch.trim().split_whitespace() {
+            for s in scratch.split_whitespace() {
                 dummy.scratch_nums.insert(s.parse::<u32>().unwrap());
             }
 
@@ -101,8 +101,8 @@ impl Solver for Day04 {
             total += 1;
 
             let c = &cards[i];
-            if c.win_nums.len() != 0 {
-                for w in 0..c.win_nums.len() as usize {
+            if !c.win_nums.is_empty() {
+                for w in 0..c.win_nums.len() {
                     q.push(w + i + 1);
                 }
             }
