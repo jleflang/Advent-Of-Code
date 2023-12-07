@@ -13,7 +13,7 @@ impl Solver for Day06 {
     }
 
     fn part_a(&self, input: &str, out: std::sync::Arc<std::sync::Mutex<schema::Answer>>) 
-            -> Result<std::time::Duration, Box<(dyn std::error::Error + Send + Sync)>> {
+            -> Result<Duration, Box<(dyn std::error::Error + Send + Sync)>> {
         
         let ts = Instant::now();
         let mut lines = input.lines();
@@ -48,7 +48,7 @@ impl Solver for Day06 {
     }
 
     fn part_b(&self, input: &str, out: std::sync::Arc<std::sync::Mutex<schema::Answer>>) 
-            -> Result<std::time::Duration, Box<(dyn std::error::Error + Send + Sync)>> {
+            -> Result<Duration, Box<(dyn std::error::Error + Send + Sync)>> {
         let ts = Instant::now();
         let mut lines = input.lines();
 
