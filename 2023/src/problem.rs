@@ -8,6 +8,8 @@ mod day5;
 mod day6;
 mod day7;
 mod day8;
+mod day9;
+mod day10;
 
 pub const DAYS: &[&dyn Solver] = &[
     &day1::Day01,
@@ -18,5 +20,7 @@ pub const DAYS: &[&dyn Solver] = &[
     &day6::Day06,
     &day7::Day07,
     &day8::Day08,
+    &day9::Day09,
+    &day10::Day10,
 ];
 
