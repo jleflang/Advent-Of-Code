@@ -108,7 +108,7 @@ impl Solver for Day08 {
 
             }
 
-            path_len.push(visited.len());
+            path_len.push(visited.len() as u64);
         }
 
         let mut _total = u64::MAX;
@@ -117,16 +117,14 @@ impl Solver for Day08 {
             _total = path_len[0] as u64;
         }
         else {
-            let node_path = path.len();
+            let node_path = path.len() as u64;
             let mut multiple = lcm(path_len.pop().unwrap(), path_len.pop().unwrap()) / node_path;
 
-            if path_len.len() >= 1 {
-                while path_len.len() > 0 {
-                    multiple = lcm(multiple, path_len.pop().unwrap() / node_path);
-                }
+            while path_len.len() >= 1 {
+                multiple = lcm(multiple, path_len.pop().unwrap() / node_path);
             }
 
-            _total = (multiple * node_path) as u64;
+            _total = multiple * node_path;
 
         }
 
