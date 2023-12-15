@@ -1,0 +1,6 @@
+# some optimizations
+[build]
+rustflags = ["-C", "target-cpu=native"]
+
+[profile.release]
+strip = "symbols"
