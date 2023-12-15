@@ -15,3 +15,5 @@ Cargo.lock
 
 # Input files go in each year
 **/input
+
+.vscode/

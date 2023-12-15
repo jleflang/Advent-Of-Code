@@ -66,7 +66,7 @@ impl PipeMap {
         for (uv, direction) in START_DIR.iter() {
             let (x, y) = (self.start.0 as i32 + uv.0, self.start.1 as i32 + uv.1);
 
-            if x < 0 && y < 0 && x >= 140 && y >= 140 {
+            if x < 0 || y < 0 || x >= 140 || y >= 140 {
                 continue;
             }
 
@@ -129,6 +129,28 @@ impl PipeMap {
         }
 
         path
+    }
+
+    fn area(&self, path: Path) -> i32 {
+
+        let mut verts = vec![self.start];
+
+        verts.extend(path.iter().map(|(_, v)| v[0].0));
+        
+        let mut trail: i32 = 0;
+        for (i, xy) in verts.windows(2).enumerate() {
+            if i == verts.len()-1 {
+                trail += (xy[0].0 as i32 * verts[0].1 as i32) - (xy[0].1 as i32 * verts[0].0 as i32);
+            }
+            else {
+                trail += (xy[0].0 as i32 * xy[1].1 as i32) - (xy[0].1 as i32 * xy[1].0 as i32);
+            }
+        }
+
+        let area = (trail / 2).abs();
+
+        (area - (path.len() as i32 / 2) + 1).abs()
+
     }
 
 }
@@ -257,12 +279,12 @@ impl Solver for Day10 {
 
         let path = map.path();
 
-        let max_dist = *path.keys().max().unwrap();
+        let area = map.area(path);
 
         let d = ts.elapsed();
 
         let mut output = out.lock().unwrap();
-        *output = max_dist.into();
+        *output = area.into();
 
         Ok(d)
         
@@ -292,11 +314,31 @@ mod test {
         LJ...
     "};
 
+    const MAP2: &str = indoc! {"
+        FF7FSF7F7F7F7F7F---7
+        L|LJ||||||||||||F--J
+        FL-7LJLJ||||||LJL-77
+        F--JF--7||LJLJ7F7FJ-
+        L---JF-JLJ.||-FJLJJ7
+        |F|F-JF---7F7-L7L|7|
+        |FFJF7L7F-JF7|JL---7
+        7-L-JL7||F7|L7F-7F7|
+        L.L7LFJ|||||FJL7||LJ
+        L7JLJL-JLJLJL--JLJ.L
+    "};
+
     #[test]
     fn part_a() {
         let out = Arc::new(Mutex::new(Answer::Unimplemented));
         let _ = Day10.part_a(MAP, out.clone());
         assert_eq!(*out.lock().unwrap().deref(), Answer::Number(8));
+    }
+
+    #[test]
+    fn part_b() {
+        let out = Arc::new(Mutex::new(Answer::Unimplemented));
+        let _ = Day10.part_b(MAP2, out.clone());
+        assert_eq!(*out.lock().unwrap().deref(), Answer::Number(10));
     }
 
 }
