@@ -190,7 +190,7 @@ impl Solver for Day14 {
                 let idx = pattern.iter().position(|d| *d == tiltbox.dish).unwrap();
                 let cycles = pattern.len() - idx;
                 let closed_cycle = idx + (1_000_000_000 - idx) % cycles;
-                tiltbox.dish = pattern.iter().collect::<Vec<_>>()[closed_cycle].to_vec();
+                tiltbox.dish = pattern[closed_cycle].clone();
                 break;
             }
 
