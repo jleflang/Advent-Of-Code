@@ -43,65 +43,29 @@ fn transpose(mirror: &Mirror) -> Mirror {
 
 #[derive(Debug, Default)]
 struct Reflections {
-
     vertical: usize,
-
     horizontal: usize,
-
 }
 
 impl Reflections {
 
     fn vertical_reflect(&mut self, mirror: &Mirror, allowed: usize) -> &mut Self {
-
-        let mut total = 0;
     
         let t_mirror = transpose(mirror);
 
-        for i in 1..t_mirror.len() {
-            let (left, right) = t_mirror.split_at(i);
-
-            let left: Vec<Vob> = left.iter().rev().map(|v| v.clone()).collect();
-
-            if left.len() > right.len() {
-                let short_len = right.len();
-
-                let s = left[..short_len].iter()
-                                         .zip(right.iter())
-                                         .map(|(v1, v2)| 
-                                                  (v1 ^ v2).iter_set_bits(..).count()
-                                             )
-                                         .sum::<usize>();
-
-                if s == allowed {
-                    total = i;
-                    break;
-                }
-            } else {
-                let short_len = left.len();
-
-                let s = right[..short_len].iter()
-                                          .zip(left.iter())
-                                          .map(|(v1, v2)| 
-                                                  (v1 ^ v2).iter_set_bits(..).count()
-                                              )
-                                          .sum::<usize>();
-
-                if s == allowed {
-                    total = i;
-                    break;
-                }
-            };
-
-        }
-
-        self.vertical = total;
+        self.vertical = Self::reflect(&t_mirror, allowed);
 
         self
     }
 
     fn horizontal_reflect(&mut self, mirror: &Mirror, allowed: usize) -> &mut Self {
 
+        self.horizontal = Self::reflect(mirror, allowed);
+
+        self
+    }
+
+    fn reflect(mirror: &Mirror, allowed: usize) -> usize {
         let mut total = 0;
 
         for i in 1..mirror.len() {
@@ -141,9 +105,8 @@ impl Reflections {
 
         }
 
-        self.horizontal = total;
+        total
 
-        self
     }
 
     #[inline(always)]
