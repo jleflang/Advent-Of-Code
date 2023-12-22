@@ -20,7 +20,7 @@ impl Solver for Day15 {
 
         let ts = Instant::now();
 
-        let hashes = input.trim().split(",").collect::<Vec<_>>();
+        let hashes = input.trim().split(',').collect::<Vec<_>>();
 
         let total: u32 = hashes.iter().map(|h| hash(h)).sum();
         
@@ -37,7 +37,7 @@ impl Solver for Day15 {
 
         let ts = Instant::now();
         
-        let lenses = input.trim().split(",").collect::<Vec<_>>();
+        let lenses = input.trim().split(',').collect::<Vec<_>>();
 
         const INNER: Vec<(String, u8)> = vec![];
         let mut boxes = vec![INNER; 256];
@@ -51,7 +51,7 @@ impl Solver for Day15 {
 
             let lens_box = &mut boxes[hash as usize];
             if f == "=" {
-                if let Some(lens_pos) = lens_box.iter().position(|l| &l.0 == name) {
+                if let Some(lens_pos) = lens_box.iter().position(|l| l.0 == name) {
                     lens_box[lens_pos] = (name.to_string(), num.parse::<u8>().unwrap());
                 } else {
                     lens_box.push((name.to_string(), num.parse::<u8>().unwrap()));

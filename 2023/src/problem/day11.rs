@@ -66,7 +66,7 @@ impl Solver for Day11 {
         let ts = Instant::now();
         let lines = input.lines().collect::<Vec<_>>();
 
-        let mut mx = vob![false; lines[0].bytes().into_iter().count()];
+        let mut mx = vob![false; lines[0].len()];
         let mut my = vob![false; lines.len()];
 
         let mut map: Map = Vec::new();
@@ -107,7 +107,7 @@ impl Solver for Day11 {
         let ts = Instant::now();
         let lines = input.lines().collect::<Vec<_>>();
 
-        let mut mx = vob![false; lines[0].bytes().into_iter().count()];
+        let mut mx = vob![false; lines[0].len()];
         let mut my = vob![false; lines.len()];
 
         let mut map: Map = Vec::new();

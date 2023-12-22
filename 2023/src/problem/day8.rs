@@ -5,7 +5,7 @@ use num::integer::lcm;
 use schema::Solver;
 
 fn parse(input: &str) -> (Map, Vec<char>) {
-    let mut lines = input.split("\n").filter(|l| !l.is_empty());
+    let mut lines = input.split('\n').filter(|l| !l.is_empty());
 
     let path: Vec<char> = lines.next().unwrap().chars().collect();
 
@@ -13,8 +13,8 @@ fn parse(input: &str) -> (Map, Vec<char>) {
 
     for l in lines {
         let (node, fork) = l.split_once(" = ").unwrap();
-        let (left, right) = fork.strip_prefix("(").unwrap()
-                                .strip_suffix(")").unwrap()
+        let (left, right) = fork.strip_prefix('(').unwrap()
+                                .strip_suffix(')').unwrap()
                                 .split_once(", ").unwrap();
 
         map.insert(node, (left, right));
@@ -114,13 +114,13 @@ impl Solver for Day08 {
         let mut _total = u64::MAX;
 
         if path_len.len() == 1 {
-            _total = path_len[0] as u64;
+            _total = path_len[0];
         }
         else {
             let node_path = path.len() as u64;
             let mut multiple = lcm(path_len.pop().unwrap(), path_len.pop().unwrap()) / node_path;
 
-            while path_len.len() >= 1 {
+            while !path_len.is_empty() {
                 multiple = lcm(multiple, path_len.pop().unwrap() / node_path);
             }
 

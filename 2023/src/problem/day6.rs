@@ -55,7 +55,6 @@ impl Solver for Day06 {
         let time: u64 = lines.next().unwrap()
                                         .split_ascii_whitespace()
                                         .skip(1)
-                                        .into_iter()
                                         .flat_map(|s| s.chars())
                                         .collect::<String>()
                                         .parse::<u64>().unwrap();
@@ -63,7 +62,6 @@ impl Solver for Day06 {
         let dist: u64 = lines.next().unwrap()
                                         .split_ascii_whitespace()
                                         .skip(1)
-                                        .into_iter()
                                         .flat_map(|s| s.chars())
                                         .collect::<String>()
                                         .parse::<u64>().unwrap();

@@ -21,7 +21,7 @@ enum Kind {
     Five
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 struct Hand<'a> {
 
     cards: &'a str,
@@ -32,7 +32,7 @@ struct Hand<'a> {
 
 type Hands<'a> = Vec<Hand<'a>>;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 struct JokerHand<'a> {
 
     cards: &'a str,
@@ -154,13 +154,7 @@ impl Ord for Hand<'_> {
 
 impl PartialOrd for Hand<'_> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(&other))
-    }
-}
-
-impl Default for Hand<'_> {
-    fn default() -> Self {
-        Self { cards: "", bid: 0 }
+        Some(self.cmp(other))
     }
 }
 
@@ -196,13 +190,7 @@ impl Ord for JokerHand<'_> {
 
 impl PartialOrd for JokerHand<'_> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(&other))
-    }
-}
-
-impl Default for JokerHand<'_> {
-    fn default() -> Self {
-        Self { cards: "", bid: 0 }
+        Some(self.cmp(other))
     }
 }
 

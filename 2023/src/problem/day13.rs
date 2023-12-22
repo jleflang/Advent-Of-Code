@@ -71,7 +71,7 @@ impl Reflections {
         for i in 1..mirror.len() {
             let (left, right) = mirror.split_at(i);
 
-            let left: Vec<Vob> = left.iter().rev().map(|v| v.clone()).collect();
+            let left: Vec<Vob> = left.iter().rev().cloned().collect();
 
             if left.len() > right.len() {
                 let short_len = right.len();

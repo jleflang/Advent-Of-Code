@@ -105,7 +105,7 @@ impl PipeMap {
             
             let next_node = self.next(node);
 
-            if path.values().find(|&v| v.contains(&next_node)).is_some() {
+            if path.values().any(|v| v.contains(&next_node)) {
                 continue;
             }
 
@@ -135,7 +135,7 @@ impl PipeMap {
 
         let mut verts = vec![self.start];
 
-        verts.extend(path.iter().map(|(_, v)| v[0].0));
+        verts.extend(path.values().map(|v| v[0].0));
         
         let mut trail: i32 = 0;
         for (i, xy) in verts.windows(2).enumerate() {

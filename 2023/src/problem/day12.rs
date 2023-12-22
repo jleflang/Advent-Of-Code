@@ -13,13 +13,13 @@ fn solve(springs: &Vec<u8>, rep: usize, count: &Vec<usize>) -> usize {
     let mut spring_count = Vec::with_capacity(count.len() * rep);
 
     for _ in 1..rep {
-        spring_pat.extend_from_slice(&springs);
+        spring_pat.extend_from_slice(springs);
         spring_pat.push(b'?');
-        spring_count.extend_from_slice(&count);
+        spring_count.extend_from_slice(count);
     };
 
-    spring_pat.extend_from_slice(&springs);
-    spring_count.extend_from_slice(&count);
+    spring_pat.extend_from_slice(springs);
+    spring_count.extend_from_slice(count);
 
     spring_pat.push(b'.');
 
