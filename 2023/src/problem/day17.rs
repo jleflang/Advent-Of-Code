@@ -80,7 +80,7 @@ impl Walker {
 
     fn find_neighbors<const MAX: usize>(&self, node: Node, puzzle: &Puzzle) -> Vec<(Node, usize)> {
 
-        [Direction::N, Direction::E, Direction::W, Direction::S].iter().flat_map(move |direction| {
+        [Direction::N, Direction::E, Direction::W, Direction::S].iter().flat_map(|direction| {
             let mut out: Vec<(Node, usize)> = Vec::with_capacity(4);
             let p = direction.move_dir(node.pos);
 
@@ -132,27 +132,16 @@ impl Walker {
     {
 
         let mut seen: HashMap<Node, usize> = HashMap::new();
-        let mut rpath: HashMap<Node, Node> = HashMap::new();
-        let manhattan = |p: &Pos, g: &Pos| { (g.0.abs_diff(p.0) + g.1.abs_diff(p.1)) as usize };
 
         seen.insert(Node {pos: self.start, direction: None, steps: 0}, 0);
 
         unvisited.clear();
-        unvisited.push(Node {pos: self.start, direction: None, steps: 0}, manhattan(&self.start, &self.goal));
+        unvisited.push(Node {pos: self.start, direction: None, steps: 0}, 0);
 
-        while let Some((node, _)) = unvisited.pop() {
+        while let Some((node, g)) = unvisited.pop() {
 
             if node.pos == self.goal {
-
-                let mut pos = node;
-                while let Some(&n) = rpath.get(&pos) {
-                    let p = pos.pos;
-                    
-                    if p != self.start {
-                        self.total_loss += puzzle[p.0 as usize][p.1 as usize] as usize;
-                    }
-                    pos = n;
-                }
+                self.total_loss = g;
                 break;
             }
 
@@ -165,14 +154,13 @@ impl Walker {
 
                 let next_node = neighbor.0;
 
-                if let Some(&g) = seen.get(&node) {
+                if let Some(&g_t) = seen.get(&node) {
                     let next_pos = next_node.pos;
-                    let next_loss = g + puzzle[next_pos.0 as usize][next_pos.1 as usize] as usize;
+                    let next_loss = g_t + puzzle[next_pos.0 as usize][next_pos.1 as usize] as usize;
                     
                     if seen.get(&next_node).map_or(true, |&g_n| next_loss < g_n) {
-                        rpath.insert(next_node, node);
                         seen.insert(next_node, next_loss);
-                        unvisited.try_decrease_key_or_push(&next_node, next_loss + manhattan(&next_pos, &self.goal));
+                        unvisited.try_decrease_key_or_push(&next_node, next_loss);
                     }
                 }
             }
