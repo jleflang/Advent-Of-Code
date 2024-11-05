@@ -193,7 +193,7 @@ impl Solver for Day17 {
             puzzle.push(line.chars().map(|c| c.to_digit(10).unwrap() as u8).collect::<Vec<u8>>());
         }
 
-        let unvisited: QuarternaryHeapWithMap<Node, usize> = QuarternaryHeapWithMap::default();
+        let unvisited: QuaternaryHeapWithMap<Node, usize> = QuaternaryHeapWithMap::default();
 
         let mut walker = Walker::default();
         walker.set_pos((0, 0));
@@ -221,7 +221,7 @@ impl Solver for Day17 {
             puzzle.push(line.chars().map(|c| c.to_digit(10).unwrap() as u8).collect::<Vec<u8>>());
         }
 
-        let unvisited: QuarternaryHeapWithMap<Node, usize> = QuarternaryHeapWithMap::default();
+        let unvisited: QuaternaryHeapWithMap<Node, usize> = QuaternaryHeapWithMap::default();
 
         let mut walker = Walker::default();
         walker.set_pos((0, 0));
