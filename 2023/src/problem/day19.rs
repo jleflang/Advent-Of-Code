@@ -51,7 +51,7 @@ fn parse(input: &str) -> AsmIns<'_> {
                 b'<' => Compare::LT,
                 _ => unreachable!()
             };
-            top.value = val.parse::<u32>().expect("Invalid value");
+            top.value = val.parse::<u64>().expect("Invalid value");
 
             top.init_path(out);
 
@@ -72,10 +72,10 @@ fn parse(input: &str) -> AsmIns<'_> {
             let (n, v) = t.split_once('=').unwrap();
 
             match n {
-                "x" => num.x = v.parse::<u32>().unwrap(),
-                "m" => num.m = v.parse::<u32>().unwrap(),
-                "a" => num.a = v.parse::<u32>().unwrap(),
-                "s" => num.s = v.parse::<u32>().unwrap(),
+                "x" => num.x = v.parse::<u64>().unwrap(),
+                "m" => num.m = v.parse::<u64>().unwrap(),
+                "a" => num.a = v.parse::<u64>().unwrap(),
+                "s" => num.s = v.parse::<u64>().unwrap(),
                 _   => unreachable!()
             }
         }
@@ -89,15 +89,17 @@ fn parse(input: &str) -> AsmIns<'_> {
 }
 
 #[derive(Debug, Default, PartialEq, Eq)]
+#[repr(C)]
 struct Part {
-    x: u32,
-    m: u32,
-    a: u32,
-    s: u32
+    x: u64,
+    m: u64,
+    a: u64,
+    s: u64
 }
 
 impl Part {
-    fn get(&self, p: u8) -> u32 {
+    #[inline]
+    fn get(&self, p: u8) -> u64 {
         match p {
             b'x' => self.x,
             b'm' => self.m,
@@ -107,12 +109,14 @@ impl Part {
         }
     }
 
+    #[inline]
     fn sum(&self) -> u64 {
-        self.x as u64 + self.m as u64 + self.a as u64 + self.s as u64
+        self.x + self.m + self.a + self.s
     }
 }
 
 #[derive(Debug)]
+#[repr(transparent)]
 struct Ruleset<'a> (Vec<Rule<'a>>);
 
 impl Default for Ruleset<'_> {
@@ -136,23 +140,25 @@ enum Rule<'a> {
 }
 
 #[derive(Debug)]
+#[repr(C)]
 struct Ops<'a> {
     p: u8,
     op: Compare,
-    value: u32,
-    dpath: Box<Outcome<'a>>
+    value: u64,
+    dpath: Outcome<'a>
 }
 
 
 impl<'a> Ops<'a> {
     fn init_path(&mut self, path: Outcome<'a>) {
-        self.dpath = Box::new(path);
+        self.dpath = path;
     }
 
     fn new() -> Self {
-        Self { p: 0, op: Compare::None, value: 0, dpath: Box::new(Outcome::None) }
+        Self { p: 0, op: Compare::None, value: 0, dpath: Outcome::None }
     }
 
+    #[inline]
     fn idx(&self) -> usize {
         match self.p {
             b'x' => 0,
@@ -171,7 +177,13 @@ enum Outcome<'a> {
     Reject = b'R',
     Accept = b'A',
     R(&'a str),
-    None,
+    None = b'\0',
+}
+
+impl Default for Outcome<'_> {
+    fn default() -> Self {
+        Self::None
+    }
 }
 
 impl Outcome<'_> {
@@ -201,15 +213,15 @@ impl<'a> From<&'a str> for Outcome<'a> {
     }
 }
 
-
-fn size(ranges: [(u32, u32); 4]) -> u64 {
-    ranges.iter().map(|&(f, s)| s as u64 - f as u64 + 1).fold(1, |acc, i| acc * i)
+#[inline(always)]
+fn size(ranges: [(u64, u64); 4]) -> u64 {
+    ranges.iter().map(|&(f, s)| s - f + 1).fold(1, |acc, i| acc * i)
 }
 
-fn dyn_part_b(rules: &HashMap<&str, Ruleset<'_>>, mut range: [(u32, u32); 4], inp: &str) -> u64 {
+fn dyn_part_b(rules: &HashMap<&str, Ruleset<'_>>, mut range: [(u64, u64); 4], inp: &str) -> u64 {
     let mut ans = 0;
 
-    let mut solve = |range: [(u32, u32); 4], dest: &str| {
+    let mut solve = |range: [(u64, u64); 4], dest: &str| {
         if dest == "A" {
             ans += size(range);
         }
@@ -267,10 +279,10 @@ impl Solver for Day19 {
         let part_list = parse(input);
 
         for part in part_list.parts {
-            let mut pt: String = "in".to_string();
+            let mut pt: &str = r"in";
 
             loop {
-                let work = part_list.rules.get(pt.as_str()).expect("BAD PARSE");
+                let work = part_list.rules.get(pt).expect("BAD PARSE");
 
                 for rule in &work.0 {
                     match rule {
@@ -280,13 +292,13 @@ impl Solver for Day19 {
                                                 Compare::LT => {part.get(a.p) < a.value},
                                                 _ => panic!("BAD OP")
                                             } {
-                                                pt = a.dpath.as_ref().as_str().to_string();
+                                                pt = a.dpath.as_str();
                                                 break;
                                             }
 
                                         },
                         Rule::Default(a) => {
-                                            pt = a.to_owned().to_string();
+                                            pt = a;
                                             break;
                                         },
                         Rule::None => panic!(),
@@ -322,7 +334,7 @@ impl Solver for Day19 {
 
         let part_list = parse(input);
 
-        let ans = dyn_part_b(&part_list.rules, range, "in");
+        let ans = dyn_part_b(&part_list.rules, range, r"in");
 
         let d = ts.elapsed();
 

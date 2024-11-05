@@ -3,4 +3,5 @@
 rustflags = ["-C", "target-cpu=native"]
 
 [profile.release]
-strip = "symbols"
+strip = true
+lto = "fat"
